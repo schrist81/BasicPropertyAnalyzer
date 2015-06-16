@@ -8,6 +8,8 @@ last_value = 0
 complete_dataset = np.array([0,0])
 rig = 0
 abffile = "None"
+iAP_file = "None"
+input_resistance = 0
 class spontActiviy():
     def attempted_action_potential_found(complete_section):
         #Sucht nach versuchten Aktionspotentialen (Peak hoeher als -20 mV) im gesamten Trace
@@ -52,7 +54,8 @@ class Example(Frame):
         self.parent.config(menu=menubar)
         
         fileMenu = Menu(menubar)
-        fileMenu.add_command(label="Open file...", command=self.onOpen)
+        fileMenu.add_command(label="Open file gap free recording...", command=self.onOpenGapFree)
+        fileMenu.add_command(label="Open current step recording...", command=self.onOpenCurrentStep)
         fileMenu.add_command(label="Exit", command=self.onExit)    
         menubar.add_cascade(label="File", menu=fileMenu)     
         
@@ -74,9 +77,47 @@ class Example(Frame):
     def onHelp(self):
         pass     
     
-
+    def onOpenCurrentStep(self):
+        global rec, complete_dataset, iAP_file, input_resistance
+        ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
+        dlg = tkFileDialog.Open(self, filetypes = ftypes)
+        fl = dlg.show()
+        
+        if fl != '':
+            rec = stfio.read(str(fl))
+            path = str(fl)
+            
+            #Extract filename for Excel file
+            singles = path.split("/")
+            iAP_file = singles[-1]		
 		
-    def onOpen(self):
+
+            i = 0
+            while i < len(rec[0]):
+                
+                trace = rec[0][i].asarray()
+                
+                #sampling rate: rec.dt in ms, mean of interval between 0.5 and 1 s
+                interval_begin = 500/rec.dt
+                interval_end = 1000/rec.dt
+            
+                
+                if (i == 0):
+                    if (trace[trace.argmax()] < 0):
+                        first_mean = trace[interval_begin:interval_end].mean()
+                        print "First mean: " + str(first_mean)
+                    else:
+                        print "Error"
+                elif (i == 1): 
+                    if (trace[trace.argmax()] < 0):
+                        second_mean = trace[interval_begin:interval_end].mean()
+                        print "Second mean: " + str(second_mean)
+                    else:
+                        print "Error"
+                i = i + 1
+            print calculateInputResistance(first_mean, second_mean)  
+		
+    def onOpenGapFree(self):
         global rec, complete_dataset, abffile
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
         dlg = tkFileDialog.Open(self, filetypes = ftypes)
@@ -133,6 +174,30 @@ class Example(Frame):
         #f = open(filename, "r")
         #text = f.read()
         #return text
+        
+    def calculateInputResistance(first_mean, second_mean):
+        global input_resistance
+        '''
+        Receives means of two current steps in mV
+        Assumes Delta of 10 pA
+        Returns the input resistance in MOhm, calculated with Ohm's law U = R * I
+        '''
+        #transform pA in A
+        deltaI = 1E-11
+        
+        #DeltaU and transform mV in V
+        deltaU = (second_mean-first_mean)/1000
+        
+        # U = R * I => R = U/I
+        resistance = deltaU/deltaI
+        
+        #tranform Ohm in MOhm
+        input_resistance = resistance/1000000
+        
+        return input_resistance
+		
+
+    	
          
 
 root = Tk()
