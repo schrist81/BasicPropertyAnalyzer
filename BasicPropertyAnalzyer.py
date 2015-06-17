@@ -10,6 +10,7 @@ rig = 0
 abffile = "None"
 iAP_file = "None"
 input_resistance = 0
+
 class spontActiviy():
     def attempted_action_potential_found(complete_section):
         #Sucht nach versuchten Aktionspotentialen (Peak hoeher als -20 mV) im gesamten Trace
@@ -37,6 +38,28 @@ class spontActiviy():
         mean_array = complete_section[first_value:last_value]
 
         return mean_array.mean()
+        
+class inducedActivity():
+    def calculateInputResistance(self, first_mean, second_mean):
+        global input_resistance
+        '''
+        Receives means of two current steps in mV
+        Assumes Delta of 10 pA
+        Returns the input resistance in MOhm, calculated with Ohm's law U = R * I
+        '''
+        #transform pA in A
+        deltaI = 1E-11
+        
+        #DeltaU and transform mV in V
+        deltaU = (second_mean-first_mean)/1000
+        
+        # U = R * I => R = U/I
+        resistance = deltaU/deltaI
+        
+        #tranform Ohm in MOhm
+        input_resistance = resistance/1000000
+        
+        return input_resistance
 
 class Example(Frame):
   
@@ -115,7 +138,7 @@ class Example(Frame):
                     else:
                         print "Error"
                 i = i + 1
-            print calculateInputResistance(first_mean, second_mean)  
+            print inducedActivity().calculateInputResistance(first_mean, second_mean)  
 		
     def onOpenGapFree(self):
         global rec, complete_dataset, abffile
@@ -175,30 +198,7 @@ class Example(Frame):
         #text = f.read()
         #return text
         
-    def calculateInputResistance(first_mean, second_mean):
-        global input_resistance
-        '''
-        Receives means of two current steps in mV
-        Assumes Delta of 10 pA
-        Returns the input resistance in MOhm, calculated with Ohm's law U = R * I
-        '''
-        #transform pA in A
-        deltaI = 1E-11
-        
-        #DeltaU and transform mV in V
-        deltaU = (second_mean-first_mean)/1000
-        
-        # U = R * I => R = U/I
-        resistance = deltaU/deltaI
-        
-        #tranform Ohm in MOhm
-        input_resistance = resistance/1000000
-        
-        return input_resistance
-		
-
-    	
-         
+  
 
 root = Tk()
 ex = Example(root)
