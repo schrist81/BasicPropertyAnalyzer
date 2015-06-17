@@ -3,6 +3,13 @@ import tkMessageBox as box
 import tkFileDialog 
 import stfio
 import tkSimpleDialog 
+
+# Imports for Export to Excel
+from openpyxl import Workbook
+from openpyxl.compat import range
+from openpyxl.cell import get_column_letter
+from openpyxl.styles import Font, Fill
+
 rec = stfio.read("14122000.abf")
 last_value = 0
 complete_dataset = np.array([0,0])
@@ -11,20 +18,71 @@ abffile = "None"
 iAP_file = "None"
 input_resistance = 0
 
-class spontActiviy():
+#Create Excel file
+wb = Workbook()
+dest_filename = 'F:\Programmierung\Python\empty_book.xlsx'
+ws1 = wb.active
+ws1.title = "Test"
+
+# Filling of Column A with Descriptions
+ws1['A5'] = "Filename of the first CC recording"
+ws1['A6'] = "rig"
+ws1['A7'] = "Vmembrane (mV)"
+ws1['A8'] = "1-5 slope input res (Mohms)"
+ws1['A9'] = "Capacitance (pf)"  
+ws1['A10'] = "Series resistance (Mohm)"
+ws1['A11'] = "Voltage Offset (mV)"
+ws1['A12'] = "sAP"
+ws1['A13'] = "n (1)"
+ws1['A14'] = "a (2)"
+ws1['A15'] = "y (3)"
+ws1['A16'] = "sAP code"
+ws1['A17'] = "sAP description (burst | single)"
+ws1['A18'] = "iAP"
+ws1['A19'] = "n (1)"
+ws1['A20'] = "a (2)"
+ws1['A21'] = "ys (3)"
+ws1['A22'] = "at (4)"
+ws1['A23'] = "yt (5)"
+ws1['A24'] = "iAP code"
+
+
+ws1['A27'] = "filename"
+ws1['A28'] = "sweep number"
+ws1['A36'] = "Spike frequency (0.1 s)"
+ws1['A37'] = "-10"
+ws1['A38'] = "0"
+ws1['A39'] = "10"
+ws1['A40'] = "20"
+ws1['A41'] = "30"
+ws1['A42'] = "40"
+ws1['A43'] = "50"
+ws1['A44'] = "60"
+ws1['A45'] = "70"
+ws1['A46'] = "80"
+ws1['A47'] = "90"
+ws1['A48'] = "100"
+ws1['A49'] = "110"
+ws1['A50'] = "120"
+ws1['A51'] = "130"
+ws1['A52'] = "140"
+ws1['A53'] = "150"
+ws1['A54'] = "160"
+ws1['A55'] = "170"
+ws1['A56'] = "180"
+dest_filename = 'F:\Programmierung\Python\empty_book.xlsx'
+wb.save(filename = dest_filename)
+
+class spontActivity():
     def attempted_action_potential_found(complete_section):
         #Sucht nach versuchten Aktionspotentialen (Peak hoeher als -20 mV) im gesamten Trace
-        if complete_dataset[complete_dataset.argmax()] < -20:
-            return False
-        else:
-            return True
+        return complete_dataset[complete_dataset.argmax()] > -10
+
 
     def action_potential_found(complete_section):
         #Sucht nach Aktionspotentialen im gesamten Trace
-        if complete_dataset[complete_dataset.argmax()] < 0:
-            return False
-        else:
-            return True
+        return complete_dataset[complete_dataset.argmax()] > 0
+
         
     def mean_first_10s(self, complete_section):     
         global last_value, mean_array
@@ -92,6 +150,7 @@ class Example(Frame):
         #self.txt.pack(fill=BOTH, expand=1)
 
     def onExit(self):
+        wb.save(filename = dest_filename)
         root.destroy()
         
     def onAbout(self):
@@ -101,7 +160,7 @@ class Example(Frame):
         pass     
     
     def onOpenCurrentStep(self):
-        global rec, complete_dataset, iAP_file, input_resistance
+        global rec, complete_dataset, iAP_file, input_resistance, ws1
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
         dlg = tkFileDialog.Open(self, filetypes = ftypes)
         fl = dlg.show()
@@ -112,8 +171,8 @@ class Example(Frame):
             
             #Extract filename for Excel file
             singles = path.split("/")
-            iAP_file = singles[-1]		
-		
+            iAP_file = singles[-1]      
+        
 
             i = 0
             while i < len(rec[0]):
@@ -138,8 +197,8 @@ class Example(Frame):
                     else:
                         print "Error"
                 i = i + 1
-            print inducedActivity().calculateInputResistance(first_mean, second_mean)  
-		
+            ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
+        
     def onOpenGapFree(self):
         global rec, complete_dataset, abffile
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
@@ -176,22 +235,30 @@ class Example(Frame):
             #self.txt.insert(END, text)
             
             # noch nicht ganz sauber, muss in separate Klasse
-            if spontActiviy.action_potential_found:
-                print "no action potential"
-            else:
-                print "Action potentials found"
-                
-            if spontActiviy.attempted_action_potential_found:
-                print "no attempted action potential"
-            else:
-                print "Attempted Action potentials found"
+            if spontActivity().action_potential_found():
+                sAP =  3
+                ws1['B15'] = sAP
+                ws1['B13'] = ''
+                ws1['B14'] = ''
 
-            print spontActiviy().mean_first_10s(complete_dataset)   
-            
-            print rig
-            
-            print abffile
+            else:
+                if spontActivity().attempted_action_potential_found():
+                    sAP =  2
+                    ws1['B14'] = sAP
+                    ws1['B13'] = ''
+                    ws1['B15'] = ''
+                else:
+                    sAP =  1
+                    ws1['B13'] = sAP
+                    ws1['B14'] = ''
+                    ws1['B15'] = ''
+                    #RMP only determined in sAP code 1 files (other cases more complicated, maybe later)
+                    ws1['B7'] = spontActiviy().mean_first_10s(complete_dataset)   
 
+            ws1['B16'] = sAP
+            ws1['B6'] =  rig
+            ws1['B5'] = abffile
+            wb.save(filename = dest_filename)
     def readFile(self, filename):
         pass
         #f = open(filename, "r")
