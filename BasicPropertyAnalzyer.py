@@ -69,6 +69,11 @@ voltageStepInserter(37, 56, -10, 10)
 
 ws1['A82'] = "I K max (pA/pF)"
 
+ws1['A84'] = "Na activation (pA)"
+
+ws1['A122'] = "Na activation (pA/pF)"
+
+
 ws1['A359'] = "K currents (pA) last 50 ms averaged"
 
 
@@ -99,6 +104,7 @@ def _datacheck_peakdetect(x_axis, y_axis):
 
 
 def peakdetect(y_axis, direction, x_axis = None, lookahead = 100, delta=0):
+    global min_peak
     """
     Converted from/based on a MATLAB script at: 
     http://billauer.co.il/peakdet.html
@@ -133,6 +139,7 @@ def peakdetect(y_axis, direction, x_axis = None, lookahead = 100, delta=0):
     """
     max_peaks = []
     min_peaks = []
+    min_peak = 10000000
     dump = []   #Used to pop the first hit which almost always is false
        
     # check input data
@@ -168,7 +175,7 @@ def peakdetect(y_axis, direction, x_axis = None, lookahead = 100, delta=0):
             if y_axis[index:index+lookahead].max() < mx:
                 if y_axis[mxpos] > 0: 
                     max_peaks.append([mxpos, mx])
-                    dump.append(True)
+                    #dump.append(True)
                 #set algorithm to only find minima now
                 mx = np.Inf
                 mn = np.Inf
@@ -186,8 +193,12 @@ def peakdetect(y_axis, direction, x_axis = None, lookahead = 100, delta=0):
             #Minima peak candidate found 
             #look ahead in signal to ensure that this is a peak and not jitter
             if y_axis[index:index+lookahead].min() > mn:
+                #print y_axis[mnpos] 
                 min_peaks.append([mnpos, mn])
-                dump.append(False)
+                if y_axis[mnpos] < min_peak:
+                    min_peak = y_axis[mnpos]
+                    
+                #dump.append(False)
                 #set algorithm to only find maxima now
                 mn = -np.Inf
                 mx = -np.Inf
@@ -201,7 +212,7 @@ def peakdetect(y_axis, direction, x_axis = None, lookahead = 100, delta=0):
         return max_peaks 
         
     if direction == "negative":
-        return min_peaks 
+        return min_peak
        
 
 
@@ -313,29 +324,39 @@ class Example(Frame):
             # voltage step inserter for K mean
             voltageStepInserter(360, 396, -120, 5)
             # voltage step inserter for K current density
-            voltageStepInserter(399, 435, -120, 5)          
+            voltageStepInserter(399, 435, -120, 5)        
+            # voltage step inserter for Na activation currents
+            voltageStepInserter(85, 121, -120, 5)         
+            # voltage step inserter for Na inactivation current densities
+            voltageStepInserter(123, 159, -120, 5)                 
             while i < len(rec[0]):
                 
                 trace = rec[0][i].asarray()
                 
-
-
                 ''' Na activation currents 
                 '''                
-                # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
+                # sampling rate: rec.dt in ms, mean of interval between 58 and 100 ms
                 # look for negative peak later
-                Na_activation_interval_begin = 50/rec.dt
+                Na_activation_interval_begin = 58/rec.dt
                 Na_activation_interval_end = 100/rec.dt
-                print peakdetect(trace[Na_activation_interval_begin:Na_activation_interval_end], "negative", None, lookahead = 300, delta=0)               
                 
+                # Na activation currents
+                min_activation_peak = peakdetect(trace[Na_activation_interval_begin:Na_activation_interval_end], "negative", None, lookahead = 14 , delta=0)               
+                #print str(i)+": "+str(min_activation_peak)
+                coordinateNaAct = "B" + str(85+i)
+                ws1[coordinateNaAct] = min_activation_peak         
                 
+                # Na activation current densities
+                coordinate = "B" + str(123+i)
+                field = "="+coordinateNaAct+"/B$9"
+                ws1[coordinate] = field                
                 
                 
                 # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
                 # look for negative peak later
                 Na_inactivation_interval_begin = 250/rec.dt
                 Na_inactivation_interval_end = 270/rec.dt              
-
+                
 
                 ''' K currents 
                 '''
