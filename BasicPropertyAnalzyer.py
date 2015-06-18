@@ -62,7 +62,7 @@ ws1['A30'] = "Overshoot (mv)"
 ws1['A31'] = "Afterhyperpolarization (mv)"
 ws1['A32'] = "(calculated) Spike Height (mV)"
 
-
+ws1['A81'] = "I Na max (pA/pF)"
 ws1['A82'] = "I K max (pA/pF)"
 
 ws1['A84'] = "Na activation (pA)"
@@ -323,6 +323,7 @@ class Example(Frame):
 
             i = 0
             K_max_current = 0
+            Na_act_max_current = 0
             # voltage step inserter for K mean
             voltageStepInserter(360, 396, -120, 5)
             # voltage step inserter for K current density
@@ -364,8 +365,13 @@ class Example(Frame):
                 
                 # Na activation current densities - driving force correction - normalized conductance
                 coordinateNaActDriForceConduct = "B" + str(202+i)
-                ws1[coordinateNaActDriForceConduct] = "=B"+str(162+i)+"/MAX(B162:B198)"                
-
+                ws1[coordinateNaActDriForceConduct] = "=B"+str(162+i)+"/MAX(B162:B198)"  
+                
+                # save maximum Na current
+                if min_activation_peak < Na_act_max_current:
+                    Na_act_max_current = min_activation_peak                
+                Na_act_max_current_density = "="+str(Na_act_max_current)+"/B9"
+                ws1['B81'] = Na_act_max_current_density
                 
                 
                 # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
