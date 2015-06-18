@@ -74,6 +74,8 @@ ws1['A161'] = "Na activation driving force corrected (66.68 mV)"
 
 ws1['A201'] = "Na activation, normalized conductance G/Gmax"
 
+ws1['A241'] = "Na inactivation (pA)"
+
 
 ws1['A359'] = "K currents (pA) last 50 ms averaged"
 
@@ -330,12 +332,15 @@ class Example(Frame):
             voltageStepInserter(399, 435, -120, 5)        
             # voltage step inserter for Na activation currents
             voltageStepInserter(85, 121, -120, 5)         
-            # voltage step inserter for Na inactivation current densities
+            # voltage step inserter for Na activation current densities
             voltageStepInserter(123, 159, -120, 5)      
-            # voltage step inserter for Na inactivation current densities driving force correction
+            # voltage step inserter for Na activation current densities driving force correction
             voltageStepInserter(162, 198, -120, 5)        
-            # voltage step inserter for Na inactivation current densities driving force correction normalized conductance
+            # voltage step inserter for Na activation current densities driving force correction normalized conductance
             voltageStepInserter(202, 238, -120, 5)  
+            
+            # voltage step inserter for Na activation currents
+            voltageStepInserter(242, 278, -120, 5)                
             
             while i < len(rec[0]):
                 
@@ -374,11 +379,31 @@ class Example(Frame):
                 ws1['B81'] = Na_act_max_current_density
                 
                 
+                ''' Na inactivation currents
+                '''
                 # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
                 # look for negative peak later
                 Na_inactivation_interval_begin = 250/rec.dt
                 Na_inactivation_interval_end = 270/rec.dt              
                 
+				# Na inactivation currents
+                min_inactivation_peak = peakdetect(trace[Na_inactivation_interval_begin:Na_inactivation_interval_end], "negative", None, lookahead = 10 , delta=0)               
+                #print str(i)+": "+str(min_activation_peak)
+                coordinateNaInact = "B" + str(242+i)
+                ws1[coordinateNaInact] = min_inactivation_peak         
+                
+                # Na activation current densities
+                #coordinate = "B" + str(123+i)
+                #field = "="+coordinateNaAct+"/B$9"
+                #ws1[coordinate] = field             
+                
+                # Na activation current densities - driving force correction
+                #coordinateNaActDriForce = "B" + str(162+i)
+                #ws1[coordinateNaActDriForce] = "="+str(coordinate)+"/($A"+str(162+i)+"-66.68)"
+                
+                # Na activation current densities - driving force correction - normalized conductance
+                #coordinateNaActDriForceConduct = "B" + str(202+i)
+                #ws1[coordinateNaActDriForceConduct] = "=B"+str(162+i)+"/MAX(B162:B198)"                  
 
                 ''' K currents 
                 '''
