@@ -24,6 +24,7 @@ rig = 0
 abffile = "None"
 iAP_file = "None"
 input_resistance = 0
+capacitance = 1000
 
 #Create Excel file
 wb = Workbook()
@@ -83,6 +84,18 @@ ws1['A53'] = "150"
 ws1['A54'] = "160"
 ws1['A55'] = "170"
 ws1['A56'] = "180"
+
+
+
+ws1['A357'] = "K currents (pA) last 50 ms averaged"
+def voltageStepInserter(first_column, last_column, voltage_begin, step):
+    m = 0
+    for k in range(first_column,last_column+1):
+        coordinate = "A" + str(k)
+        ws1[coordinate] = voltage_begin-(m*-step)
+        m = m + 1   
+
+
 dest_filename = 'F:\Programmierung\Python\empty_book.xlsx'
 wb.save(filename = dest_filename)
 
@@ -268,6 +281,7 @@ class Example(Frame):
         fileMenu = Menu(menubar)
         fileMenu.add_command(label="Open file gap free recording...", command=self.onOpenGapFree)
         fileMenu.add_command(label="Open current step recording...", command=self.onOpenCurrentStep)
+        fileMenu.add_command(label="Open voltage step recording...", command=self.onOpenVoltageStep)
         fileMenu.add_command(label="Exit", command=self.onExit)    
         menubar.add_cascade(label="File", menu=fileMenu)     
         
@@ -285,10 +299,79 @@ class Example(Frame):
         root.destroy()
         
     def onAbout(self):
-        box.showinfo("About Basic Properties Analyzer", "Version 0.0.1, June 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
+        box.showinfo("About Basic Properties Analyzer", "Version 0.0.5, June 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
     
     def onHelp(self):
         pass     
+    
+    def onOpenVoltageStep(self):
+        global rec, complete_dataset, ws1
+        ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
+        dlg = tkFileDialog.Open(self, filetypes = ftypes)
+        fl = dlg.show()
+        
+        if fl != '':
+            rec = stfio.read(str(fl))
+            path = str(fl)
+            
+            #Extract filename for Excel file
+            singles = path.split("/")
+            iAP_file = singles[-1]      
+        
+
+            i = 0
+            # voltage step inserter for K mean
+            voltageStepInserter(360, 396, -120, 5)
+            # voltage step inserter for K current density
+            voltageStepInserter(399, 435, -120, 5)          
+            while i < len(rec[0]):
+                
+                trace = rec[0][i].asarray()
+                
+                # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
+                # look for negative peak later
+                Na_activation_interval_begin = 50/rec.dt
+                Na_activation_interval_end = 100/rec.dt
+                
+                
+                # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
+                # look for negative peak later
+                Na_inactivation_interval_begin = 250/rec.dt
+                Na_inactivation_interval_end = 270/rec.dt              
+                
+                # sampling rate: rec.dt in ms, mean of interval between 208 and 258 ms
+                K_mean_interval_begin = 208/rec.dt
+                K_mean_interval_end = 258/rec.dt                    
+                
+                # determine mean K currents and fill in table
+                coordinateA = "B" + str(360+i)
+                ws1[coordinateA] = trace[K_mean_interval_begin:K_mean_interval_end].mean()
+                # determine mean K current density and fill in table
+                coordinate = "B" + str(399+i)
+                field = "="+coordinateA+"/B9"
+                ws1[coordinate] = field     
+
+                i = i + 1
+                
+                '''
+                #extracts the 1s current step part of each sweep
+                injected_trace = trace[1612:101612]                 
+                coordinate = "B" + str(36+i)
+                if (injected_trace[injected_trace.argmax()] > 0):
+                    if sweep == -1:
+                        ws1['B28'] = i
+                        sweep = i
+                        # Determine Overshoot
+                        print peakdetect(injected_trace, None, lookahead = 300, delta=0)[0][1]
+                        #ws1['B30'] = 
+                    iAP_frequency = len(peakdetect(injected_trace, None, lookahead = 300, delta=0))
+                    ws1[coordinate] = iAP_frequency
+                else:
+                    ws1[coordinate] = 0
+            ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
+            ws1['B27'] = iAP_file
+            wb.save(filename = dest_filename)    
+            '''
     
     def onOpenCurrentStep(self):
         global rec, complete_dataset, iAP_file, input_resistance, ws1
@@ -421,7 +504,7 @@ class Example(Frame):
 
 root = Tk()
 ex = Example(root)
-rig = tkSimpleDialog.askstring("Rig number", "Enter the number of your rig.")
+#rig = tkSimpleDialog.askstring("Rig number", "Enter the number of your rig.")
 
 
 root.geometry("300x250+300+300")
