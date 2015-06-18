@@ -59,6 +59,8 @@ ws1['A27'] = "filename"
 ws1['A28'] = "sweep number"
 
 ws1['A30'] = "Overshoot (mv)"
+ws1['A31'] = "Afterhyperpolarization (mv)"
+ws1['A32'] = "(calculated) Spike Height (mV)"
 
 
 # instert steps for current step protocol
@@ -67,7 +69,9 @@ voltageStepInserter(37, 56, -10, 10)
 
 ws1['A82'] = "I K max (pA/pF)"
 
-ws1['A357'] = "K currents (pA) last 50 ms averaged"
+ws1['A359'] = "K currents (pA) last 50 ms averaged"
+
+
 def voltageStepInserter(first_column, last_column, voltage_begin, step):
     m = 0
     for k in range(first_column,last_column+1):
@@ -94,7 +98,7 @@ def _datacheck_peakdetect(x_axis, y_axis):
     return x_axis, y_axis
 
 
-def peakdetect(y_axis, x_axis = None, lookahead = 100, delta=0):
+def peakdetect(y_axis, direction, x_axis = None, lookahead = 100, delta=0):
     """
     Converted from/based on a MATLAB script at: 
     http://billauer.co.il/peakdet.html
@@ -193,7 +197,12 @@ def peakdetect(y_axis, x_axis = None, lookahead = 100, delta=0):
             #else:  #slows shit down this does
             #    mn = ahead
             #    mnpos = x_axis[np.where(y_axis[index:index+lookahead]==mn)]
-    return max_peaks    
+    if direction == "positive":
+        return max_peaks 
+        
+    if direction == "negative":
+        return min_peaks 
+       
 
 
 
@@ -309,17 +318,27 @@ class Example(Frame):
                 
                 trace = rec[0][i].asarray()
                 
+
+
+                ''' Na activation currents 
+                '''                
                 # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
                 # look for negative peak later
                 Na_activation_interval_begin = 50/rec.dt
                 Na_activation_interval_end = 100/rec.dt
+                print peakdetect(trace[Na_activation_interval_begin:Na_activation_interval_end], "negative", None, lookahead = 300, delta=0)               
+                
+                
                 
                 
                 # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
                 # look for negative peak later
                 Na_inactivation_interval_begin = 250/rec.dt
                 Na_inactivation_interval_end = 270/rec.dt              
-                
+
+
+                ''' K currents 
+                '''
                 # sampling rate: rec.dt in ms, mean of interval between 208 and 258 ms
                 K_mean_interval_begin = 208/rec.dt
                 K_mean_interval_end = 258/rec.dt                    
@@ -338,25 +357,8 @@ class Example(Frame):
 
                 i = i + 1
                 
-                '''
-                #extracts the 1s current step part of each sweep
-                injected_trace = trace[1612:101612]                 
-                coordinate = "B" + str(36+i)
-                if (injected_trace[injected_trace.argmax()] > 0):
-                    if sweep == -1:
-                        ws1['B28'] = i
-                        sweep = i
-                        # Determine Overshoot
-                        print peakdetect(injected_trace, None, lookahead = 300, delta=0)[0][1]
-                        #ws1['B30'] = 
-                    iAP_frequency = len(peakdetect(injected_trace, None, lookahead = 300, delta=0))
-                    ws1[coordinate] = iAP_frequency
-                else:
-                    ws1[coordinate] = 0
-            ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
-            ws1['B27'] = iAP_file
-            wb.save(filename = dest_filename)    
-            '''
+        
+            # save maximum K+ current
             K_max_current_density = "="+str(K_max_current)+"/B9"
             ws1['B82'] = K_max_current_density
     
@@ -409,9 +411,19 @@ class Example(Frame):
                         ws1['B28'] = i
                         sweep = i
                         # Determine Overshoot
-                        print peakdetect(injected_trace, None, lookahead = 300, delta=0)[0][1]
-                        #ws1['B30'] = 
-                    iAP_frequency = len(peakdetect(injected_trace, None, lookahead = 300, delta=0))
+                        overshoot = 0
+                        afterhyperpolarization = 0
+                        firstPeak = peakdetect(injected_trace, "positive", None, lookahead = 300, delta=0)[0]
+                        ws1['B30'] = firstPeak[1]
+
+                        # Determine Afterhyperpolarization
+                        afterhyperpolarization_trace = injected_trace[firstPeak[0]:firstPeak[0]+(80/rec.dt)]
+                        afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0)[0][1]  
+                        ws1['B31'] = afterhyperpolarization             
+                        # Determine Spike Height
+                        ws1['B32'] = firstPeak[1] - afterhyperpolarization
+                        
+                    iAP_frequency = len(peakdetect(injected_trace, "positive", None, lookahead = 300, delta=0))
                     ws1[coordinate] = iAP_frequency
                 else:
                     ws1[coordinate] = 0
