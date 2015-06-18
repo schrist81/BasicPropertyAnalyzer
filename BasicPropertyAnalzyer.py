@@ -61,31 +61,11 @@ ws1['A28'] = "sweep number"
 ws1['A30'] = "Overshoot (mv)"
 
 
+# instert steps for current step protocol
+voltageStepInserter(37, 56, -10, 10)
 
 
-ws1['A36'] = "Spike frequency (1 s)"
-ws1['A37'] = "-10"
-ws1['A38'] = "0"
-ws1['A39'] = "10"
-ws1['A40'] = "20"
-ws1['A41'] = "30"
-ws1['A42'] = "40"
-ws1['A43'] = "50"
-ws1['A44'] = "60"
-ws1['A45'] = "70"
-ws1['A46'] = "80"
-ws1['A47'] = "90"
-ws1['A48'] = "100"
-ws1['A49'] = "110"
-ws1['A50'] = "120"
-ws1['A51'] = "130"
-ws1['A52'] = "140"
-ws1['A53'] = "150"
-ws1['A54'] = "160"
-ws1['A55'] = "170"
-ws1['A56'] = "180"
-
-
+ws1['A82'] = "I K max (pA/pF)"
 
 ws1['A357'] = "K currents (pA) last 50 ms averaged"
 def voltageStepInserter(first_column, last_column, voltage_begin, step):
@@ -320,6 +300,7 @@ class Example(Frame):
         
 
             i = 0
+            K_max_current = 0
             # voltage step inserter for K mean
             voltageStepInserter(360, 396, -120, 5)
             # voltage step inserter for K current density
@@ -349,7 +330,11 @@ class Example(Frame):
                 # determine mean K current density and fill in table
                 coordinate = "B" + str(399+i)
                 field = "="+coordinateA+"/B9"
-                ws1[coordinate] = field     
+                ws1[coordinate] = field
+                # save maximum potassium current
+                mean = trace[K_mean_interval_begin:K_mean_interval_end].mean()
+                if mean > K_max_current:
+                    K_max_current = mean
 
                 i = i + 1
                 
@@ -372,6 +357,8 @@ class Example(Frame):
             ws1['B27'] = iAP_file
             wb.save(filename = dest_filename)    
             '''
+            K_max_current_density = "="+str(K_max_current)+"/B9"
+            ws1['B82'] = K_max_current_density
     
     def onOpenCurrentStep(self):
         global rec, complete_dataset, iAP_file, input_resistance, ws1
