@@ -73,6 +73,8 @@ ws1['A84'] = "Na activation (pA)"
 
 ws1['A122'] = "Na activation (pA/pF)"
 
+ws1['A160'] = "U = R*I, (120-66.68)"
+ws1['A161'] = "Na activation driving force corrected (66.68 mV)"
 
 ws1['A359'] = "K currents (pA) last 50 ms averaged"
 
@@ -328,7 +330,9 @@ class Example(Frame):
             # voltage step inserter for Na activation currents
             voltageStepInserter(85, 121, -120, 5)         
             # voltage step inserter for Na inactivation current densities
-            voltageStepInserter(123, 159, -120, 5)                 
+            voltageStepInserter(123, 159, -120, 5)      
+            # voltage step inserter for Na inactivation current densities driving force correction
+            voltageStepInserter(162, 198, -120, 5)          
             while i < len(rec[0]):
                 
                 trace = rec[0][i].asarray()
@@ -349,7 +353,13 @@ class Example(Frame):
                 # Na activation current densities
                 coordinate = "B" + str(123+i)
                 field = "="+coordinateNaAct+"/B$9"
-                ws1[coordinate] = field                
+                ws1[coordinate] = field             
+                
+                # Na activation current densities - driving force correction
+                coordinateNaActDriForce = "B" + str(162+i)
+                print coordinateNaActDriForce
+                ws1[coordinateNaActDriForce] = "="+str(coordinate)+"/($A"+str(162+i)+"-66.68)"
+                
                 
                 
                 # sampling rate: rec.dt in ms, mean of interval between 50 and 100 ms
