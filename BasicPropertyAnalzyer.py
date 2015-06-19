@@ -1,3 +1,28 @@
+'''
+ToDos
+Increase speed of gap free analysis
+Increase speed of current step analysis
+
+Implement Reading of a complete folder
+Implement Reading of Broken Electrode recording
+
+Define three test cases of an immature, medium mature, and fully mature neruon
+
+Write documentation including caveats and what remains 2do for the analyzer:
+Depolarization velocity
+Repolarization velocity
+Threshold
+Capacitance
+Half width
+iAP code
+RMP if cell is active
+
+Best practice
+
+
+
+
+'''
 from Tkinter import *
 import tkMessageBox as box
 import tkFileDialog 
@@ -306,7 +331,7 @@ class Example(Frame):
         root.destroy()
         
     def onAbout(self):
-        box.showinfo("About Basic Properties Analyzer", "Version 0.0.5, June 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
+        box.showinfo("About Basic Properties Analyzer", "Version 1.0, June 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
     
     def onHelp(self):
         pass     
@@ -574,7 +599,7 @@ class Example(Frame):
 
 root = Tk()
 ex = Example(root)
-#rig = tkSimpleDialog.askstring("Rig number", "Enter the number of your rig.")
+rig = tkSimpleDialog.askstring("Rig number", "Enter the number of your rig.")
 
 
 root.geometry("300x250+300+300")
