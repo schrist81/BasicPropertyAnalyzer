@@ -76,6 +76,7 @@ ws1['A201'] = "Na activation, normalized conductance G/Gmax"
 
 ws1['A241'] = "Na inactivation (pA)"
 
+ws1['A280'] = "Na inactivation conductance (driving force corrected (66.68 mV))"
 
 ws1['A359'] = "K currents (pA) last 50 ms averaged"
 
@@ -340,7 +341,9 @@ class Example(Frame):
             voltageStepInserter(202, 238, -120, 5)  
             
             # voltage step inserter for Na activation currents
-            voltageStepInserter(242, 278, -120, 5)                
+            voltageStepInserter(242, 278, -120, 5)          
+            # voltage step inserter for Na inactivation driving force correction
+            voltageStepInserter(281, 317, -120, 5)              
             
             while i < len(rec[0]):
                 
@@ -392,14 +395,9 @@ class Example(Frame):
                 coordinateNaInact = "B" + str(242+i)
                 ws1[coordinateNaInact] = min_inactivation_peak         
                 
-                # Na activation current densities
-                #coordinate = "B" + str(123+i)
-                #field = "="+coordinateNaAct+"/B$9"
-                #ws1[coordinate] = field             
-                
-                # Na activation current densities - driving force correction
-                #coordinateNaActDriForce = "B" + str(162+i)
-                #ws1[coordinateNaActDriForce] = "="+str(coordinate)+"/($A"+str(162+i)+"-66.68)"
+                # Na inactivation driving force correction
+                coordinateNaInactDriForce = "B" + str(281+i)
+                ws1[coordinateNaInactDriForce] = "="+str(coordinateNaInact)+"/($A"+str(281+i)+"-66.68)"
                 
                 # Na activation current densities - driving force correction - normalized conductance
                 #coordinateNaActDriForceConduct = "B" + str(202+i)
