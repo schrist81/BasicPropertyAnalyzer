@@ -78,6 +78,8 @@ ws1['A241'] = "Na inactivation (pA)"
 
 ws1['A280'] = "Na inactivation conductance (driving force corrected (66.68 mV))"
 
+ws1['A320'] = "Na inactivation, normalized conductance G/Gmax"
+
 ws1['A359'] = "K currents (pA) last 50 ms averaged"
 
 
@@ -343,7 +345,9 @@ class Example(Frame):
             # voltage step inserter for Na activation currents
             voltageStepInserter(242, 278, -120, 5)          
             # voltage step inserter for Na inactivation driving force correction
-            voltageStepInserter(281, 317, -120, 5)              
+            voltageStepInserter(281, 317, -120, 5)         
+            # voltage step inserter for Na inactivation driving force correction normalized conductance
+            voltageStepInserter(321, 357, -120, 5)                
             
             while i < len(rec[0]):
                 
@@ -399,10 +403,10 @@ class Example(Frame):
                 coordinateNaInactDriForce = "B" + str(281+i)
                 ws1[coordinateNaInactDriForce] = "="+str(coordinateNaInact)+"/($A"+str(281+i)+"-66.68)"
                 
-                # Na activation current densities - driving force correction - normalized conductance
-                #coordinateNaActDriForceConduct = "B" + str(202+i)
-                #ws1[coordinateNaActDriForceConduct] = "=B"+str(162+i)+"/MAX(B162:B198)"                  
-
+                # Na inactivation - driving force correction - normalized conductance
+                coordinateNaInactDriForceConduct = "B" + str(321+i)
+                ws1[coordinateNaInactDriForceConduct] = "=B"+str(281+i)+"/MAX(B281:B317)"                  
+                #=B281/MAX(B$281:B$317)
                 ''' K currents 
                 '''
                 # sampling rate: rec.dt in ms, mean of interval between 208 and 258 ms
@@ -446,7 +450,6 @@ class Example(Frame):
             i = 0
             #set sweep number to -1 to set it later to the first sweep with an AP
             sweep = -1
-            print sweep
             while i < len(rec[0]):
                 
                 trace = rec[0][i].asarray()
@@ -484,7 +487,9 @@ class Example(Frame):
 
                         # Determine Afterhyperpolarization
                         afterhyperpolarization_trace = injected_trace[firstPeak[0]:firstPeak[0]+(80/rec.dt)]
-                        afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0)[0][1]  
+                        #vermutlich Fehler weil nur ein Peak geliefert wird
+                        #afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0)[0][1]  
+                        afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0) 
                         ws1['B31'] = afterhyperpolarization             
                         # Determine Spike Height
                         ws1['B32'] = firstPeak[1] - afterhyperpolarization
