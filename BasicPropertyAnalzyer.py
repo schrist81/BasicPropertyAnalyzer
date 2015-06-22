@@ -471,13 +471,14 @@ class Example(Frame):
             singles = path.split("/")
             iAP_file = singles[-1]      
         
-
-            i = 0
             #set sweep number to -1 to set it later to the first sweep with an AP
             sweep = -1
-            while i < len(rec[0]):
+
+            for i in range(0,len(rec[0])):
+                print str(i)+": "
+                #trace = rec[0][i].asarray()
+                trace = np.array(rec[0][i])  
                 
-                trace = rec[0][i].asarray()
                 
                 #sampling rate: rec.dt in ms, mean of interval between 0.5 and 1 s
                 interval_begin = 500/rec.dt
@@ -495,12 +496,11 @@ class Example(Frame):
                     else:
                         second_mean = "Error"
                 i = i + 1
-                
-
                 #extracts the 1s current step part of each sweep
                 injected_trace = trace[1612:101612]                 
                 coordinate = "B" + str(36+i)
                 if (injected_trace[injected_trace.argmax()] > 0):
+                    print (time.clock() - start)
                     if sweep == -1:
                         ws1['B28'] = i
                         sweep = i
@@ -512,24 +512,22 @@ class Example(Frame):
 
                         # Determine Afterhyperpolarization
                         afterhyperpolarization_trace = injected_trace[firstPeak[0]:firstPeak[0]+(80/rec.dt)]
-                        #vermutlich Fehler weil nur ein Peak geliefert wird
-                        #afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0)[0][1]  
-                        afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0) 
-                        ws1['B31'] = afterhyperpolarization             
+
+                        ws1['B31'] = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0)          
                         # Determine Spike Height
                         ws1['B32'] = firstPeak[1] - afterhyperpolarization
-                        
-                    iAP_frequency = len(peakdetect(injected_trace, "positive", None, lookahead = 300, delta=0))
-                    ws1[coordinate] = iAP_frequency
+                    ws1[coordinate] = len(peakdetect(injected_trace, "positive", None, lookahead = 300, delta=5))
                 else:
                     ws1[coordinate] = 0
-            ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
-            ws1['B27'] = iAP_file
-            wb.save(filename = dest_filename)
+        
+        ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
+        ws1['B27'] = iAP_file
+        wb.save(filename = dest_filename)
             
     
         
     def onOpenGapFree(self):
+        completeList = []
         global rec, complete_dataset, abffile
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
         dlg = tkFileDialog.Open(self, filetypes = ftypes)
@@ -547,22 +545,11 @@ class Example(Frame):
             # 1 section mit 256 Datenpunkten entspricht 51 ms bei 0.2 sampling interval
             # print(rec.dt)
             
-            #Daten aus Section1 korrektes Array res kopieren
-            complete_dataset = rec[0][0].asarray()
+            # constructs single numpy array from recording
+            for i in range(0,len(rec[0])):
+                completeList.extend(rec[0][i])
+            complete_dataset = np.array(completeList)
             
-            #Wie viele Sections gibt es in Channel 1?
-            number_of_sections = len(rec[0])
-  
-            # Alle Section aus Channel 0 in eine Datenspur vereinen
-            # Needs improvement, very slow, definetely too slow for comfortable working with it
-            i = 1
-            while i < number_of_sections:
-                helper_arr = rec[0][i].asarray()    
-                complete_dataset = np.hstack((complete_dataset,helper_arr))
-                #print complete_dataset.shape
-                i += 1
-            #text = self.readFile(fl)
-            #self.txt.insert(END, text)
             
             # noch nicht ganz sauber, muss in separate Klasse
             if spontActivity().action_potential_found():
