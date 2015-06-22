@@ -1,28 +1,3 @@
-'''
-ToDos
-Increase speed of gap free analysis
-Increase speed of current step analysis
-
-Implement Reading of a complete folder
-Implement Reading of Broken Electrode recording
-
-Define three test cases of an immature, medium mature, and fully mature neruon
-
-Write documentation including caveats and what remains 2do for the analyzer:
-Depolarization velocity
-Repolarization velocity
-Threshold
-Capacitance
-Half width
-iAP code
-RMP if cell is active
-
-Best practice
-
-
-
-
-'''
 from Tkinter import *
 import tkMessageBox as box
 import tkFileDialog 
@@ -42,6 +17,8 @@ import pylab
 from scipy import fft, ifft
 from scipy.optimize import curve_fit
 
+from time import strftime
+
 rec = stfio.read("14122000.abf")
 last_value = 0
 complete_dataset = np.array([0,0])
@@ -53,7 +30,7 @@ capacitance = 1000
 
 #Create Excel file
 wb = Workbook()
-dest_filename = 'F:\Programmierung\Python\empty_book.xlsx'
+dest_filename = "F:\Programmierung\Python" + "\\"  + strftime("%Y-%m-%d_%H-%M-%S") + ".xlsx"
 ws1 = wb.active
 ws1.title = "Test"
 
@@ -117,7 +94,6 @@ def voltageStepInserter(first_column, last_column, voltage_begin, step):
 # instert steps for current step protocol
 voltageStepInserter(37, 56, -10, 10)
 
-dest_filename = 'F:\Programmierung\Python\empty_book.xlsx'
 wb.save(filename = dest_filename)
 
 
@@ -500,7 +476,6 @@ class Example(Frame):
                 injected_trace = trace[1612:101612]                 
                 coordinate = "B" + str(36+i)
                 if (injected_trace[injected_trace.argmax()] > 0):
-                    print (time.clock() - start)
                     if sweep == -1:
                         ws1['B28'] = i
                         sweep = i
@@ -528,7 +503,7 @@ class Example(Frame):
         
     def onOpenGapFree(self):
         completeList = []
-        global rec, complete_dataset, abffile
+        global rec, complete_dataset, abffile, dest_filename
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
         dlg = tkFileDialog.Open(self, filetypes = ftypes)
         fl = dlg.show()
@@ -540,6 +515,8 @@ class Example(Frame):
             #Extract filename for Excel file
             singles = path.split("/")
             abffile = singles[-1]
+            abffile = abffile.split(".")
+            dest_filename = "F:\Programmierung\Python" + "\\"  + abffile[0] + ".xlsx"
 
             # Read sampling interval in ms -> 0.2 ms for testing file
             # 1 section mit 256 Datenpunkten entspricht 51 ms bei 0.2 sampling interval
@@ -574,7 +551,7 @@ class Example(Frame):
 
             ws1['B16'] = sAP
             ws1['B6'] = rig
-            ws1['B5'] = abffile
+            ws1['B5'] = abffile[0] + "." + abffile[1]
             wb.save(filename = dest_filename)
     def readFile(self, filename):
         pass
