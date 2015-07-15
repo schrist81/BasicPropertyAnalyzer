@@ -303,11 +303,11 @@ class Example(Frame):
         #self.txt.pack(fill=BOTH, expand=1)
 
     def onExit(self):
-        wb.save(filename = dest_filename)
+        #wb.save(filename = dest_filename)
         root.destroy()
         
     def onAbout(self):
-        box.showinfo("About Basic Properties Analyzer", "Version 1.0, June 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
+        box.showinfo("About Basic Properties Analyzer", "Version 1.1, July 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
     
     def onHelp(self):
         pass     
@@ -315,7 +315,7 @@ class Example(Frame):
     def onOpenVoltageStep(self):
         global rec, complete_dataset, ws1
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
-        dlg = tkFileDialog.Open(self, filetypes = ftypes)
+        dlg = tkFileDialog.Open(self, filetypes = ftypes, initialdir = 'C:\\Users\\c-sch_000\\OneDrive\\Arbeit\\Projects\\BRG\\')
         fl = dlg.show()
         
         if fl != '':
@@ -432,6 +432,7 @@ class Example(Frame):
             # save maximum K+ current
             K_max_current_density = "="+str(K_max_current)+"/B9"
             ws1['B82'] = K_max_current_density
+        wb.save(filename = dest_filename)
     
     def onOpenCurrentStep(self):
         global rec, complete_dataset, iAP_file, input_resistance, ws1
@@ -447,11 +448,18 @@ class Example(Frame):
             singles = path.split("/")
             iAP_file = singles[-1]      
         
+            #Delete overshoot, AHP, sweep number and spike height in case
+            #a file with no spikes is opened after one with spikes
+            ws1['B27'] = ""            
+            ws1['B28'] = ""
+            ws1['B30'] = ""
+            ws1['B31'] = ""
+            ws1['B32'] = ""
             #set sweep number to -1 to set it later to the first sweep with an AP
             sweep = -1
 
             for i in range(0,len(rec[0])):
-                print str(i)+": "
+                #print str(i)+": "
                 #trace = rec[0][i].asarray()
                 trace = np.array(rec[0][i])  
                 
