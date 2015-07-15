@@ -1,8 +1,8 @@
 # BasicPropertyAnalyzer
 
 ##Requirements:
-Stimfit: https://code.google.com/p/stimfit/
-Python 2.7.10: https://www.python.org/downloads/release/python-2710/
+* Stimfit: https://code.google.com/p/stimfit/
+* Python 2.7.10: https://www.python.org/downloads/release/python-2710/
 
 
 Please follow these steps to open and analyse basic property recordings:
