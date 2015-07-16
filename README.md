@@ -17,10 +17,9 @@ Please follow these steps to open and analyse basic property recordings:
 * Copy the capacitance from pClamp to row 9
 * Check that the spike count worked correctly
 * Check that the input resistance was calculated from a quit period
-
 * Insert the iAP code in lines 18 to 24.
+
 * Do the rest of the spike analysis:
-* 
 
 ** Depolarisation rate
 ** Repolarisation rate
