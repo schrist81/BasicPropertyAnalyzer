@@ -5,7 +5,9 @@
 * Python 2.7.10: https://www.python.org/downloads/release/python-2710/
 * openpyxl: install via: pip install openpyxl in the command prompt
 * Visual C Compiler for Python27: http://aka.ms/vcpython27
-* scipy: http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy
+* get scipy from: 
+  * http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy
+  * and install according to https://pip.pypa.io/en/latest/user_guide.html#installing-from-wheels
 
 ## Working procedure
 Please follow these steps to open and analyse basic property recordings:
