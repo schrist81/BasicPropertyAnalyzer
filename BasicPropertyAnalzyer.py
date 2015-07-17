@@ -10,13 +10,16 @@ from openpyxl.compat import range
 from openpyxl.cell import get_column_letter
 from openpyxl.styles import Font, Fill
 
-# Imports for Peak Detection
+# Imports for Peak Detection and Calculations
 import numpy as np
 from math import pi, log
 import pylab
 from scipy import fft, ifft
 from scipy.optimize import curve_fit
 
+# Import for directory settings
+
+import os
 from time import strftime
 
 rec = stfio.read("14122000.abf")
@@ -27,10 +30,15 @@ abffile = "None"
 iAP_file = "None"
 input_resistance = 0
 capacitance = 1000
+openDirectory = "C:\\"
+saveDirectory = "C:\\temp\\"
 
 #Create Excel file
 wb = Workbook()
-dest_filename = "F:\Programmierung\Python" + "\\"  + strftime("%Y-%m-%d_%H-%M-%S") + ".xlsx"
+#dest_filename = saveDirectory + "\\"  + strftime("%Y-%m-%d_%H-%M-%S") + ".xlsx"
+dest_filename = ""
+dest_directory = ""
+
 ws1 = wb.active
 ws1.title = "Test"
 
@@ -94,7 +102,7 @@ def voltageStepInserter(first_column, last_column, voltage_begin, step):
 # instert steps for current step protocol
 voltageStepInserter(37, 56, -10, 10)
 
-wb.save(filename = dest_filename)
+#wb.save(filename = dest_filename)
 
 
 def _datacheck_peakdetect(x_axis, y_axis):
@@ -293,6 +301,11 @@ class Example(Frame):
         fileMenu.add_command(label="Exit", command=self.onExit)    
         menubar.add_cascade(label="File", menu=fileMenu)     
         
+        optionMenu = Menu(menubar)
+        optionMenu.add_command(label="Set parent file directory for recordings", command=self.askdirectory)
+        optionMenu.add_command(label="Set directory for generated excel files", command=self.askdirectorySave)
+        menubar.add_cascade(label="Options", menu=optionMenu)           
+        
         helpMenu = Menu(menubar)
         helpMenu.add_command(label="Help", command=self.onHelp)
         helpMenu.add_command(label="About", command=self.onAbout)    
@@ -301,13 +314,26 @@ class Example(Frame):
     
         #self.txt = Text(self)
         #self.txt.pack(fill=BOTH, expand=1)
+        
+    def askdirectory(self):
+        global openDirectory
+        """Returns a selected directoryname."""
+        openDirectory = tkFileDialog.askdirectory()
+        
+    def askdirectorySave(self):
+        global saveDirectory, dest_filename, dest_directory
+        """Returns a selected directoryname."""
+        saveDirectory = tkFileDialog.askdirectory()  
+        dest_directory  = saveDirectory
+        #dest_filename = saveDirectory +  "\\"  + abffile[0] + ".xlsx"
+        print dest_directory
 
     def onExit(self):
         #wb.save(filename = dest_filename)
         root.destroy()
         
     def onAbout(self):
-        box.showinfo("About Basic Properties Analyzer", "Version 1.1, July 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)") 
+        box.showinfo("About Basic Properties Analyzer", "Version 1.1, July 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)\n\n https://github.com/schrist81/BasicPropertyAnalyzer") 
     
     def onHelp(self):
         pass     
@@ -315,7 +341,7 @@ class Example(Frame):
     def onOpenVoltageStep(self):
         global rec, complete_dataset, ws1
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
-        dlg = tkFileDialog.Open(self, filetypes = ftypes, initialdir = 'C:\\Users\\c-sch_000\\OneDrive\\Arbeit\\Projects\\BRG\\')
+        dlg = tkFileDialog.Open(self, filetypes = ftypes, initialdir = openDirectory)
         fl = dlg.show()
         
         if fl != '':
@@ -437,7 +463,7 @@ class Example(Frame):
     def onOpenCurrentStep(self):
         global rec, complete_dataset, iAP_file, input_resistance, ws1
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
-        dlg = tkFileDialog.Open(self, filetypes = ftypes)
+        dlg = tkFileDialog.Open(self, filetypes = ftypes, initialdir = openDirectory)
         fl = dlg.show()
         
         if fl != '':
@@ -513,7 +539,7 @@ class Example(Frame):
         completeList = []
         global rec, complete_dataset, abffile, dest_filename
         ftypes = [('Axon binary files', '*.abf'), ('All files', '*')]
-        dlg = tkFileDialog.Open(self, filetypes = ftypes)
+        dlg = tkFileDialog.Open(self, filetypes = ftypes, initialdir = openDirectory)
         fl = dlg.show()
         
         if fl != '':
@@ -524,7 +550,7 @@ class Example(Frame):
             singles = path.split("/")
             abffile = singles[-1]
             abffile = abffile.split(".")
-            dest_filename = "F:\Programmierung\Python" + "\\"  + abffile[0] + ".xlsx"
+            
 
             # Read sampling interval in ms -> 0.2 ms for testing file
             # 1 section mit 256 Datenpunkten entspricht 51 ms bei 0.2 sampling interval
@@ -560,6 +586,7 @@ class Example(Frame):
             ws1['B16'] = sAP
             ws1['B6'] = rig
             ws1['B5'] = abffile[0] + "." + abffile[1]
+            dest_filename = dest_directory + "\\"  + abffile[0] + ".xlsx"
             wb.save(filename = dest_filename)
     def readFile(self, filename):
         pass
