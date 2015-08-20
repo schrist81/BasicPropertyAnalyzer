@@ -521,8 +521,9 @@ class Example(Frame):
 
                         # Determine Afterhyperpolarization
                         afterhyperpolarization_trace = injected_trace[firstPeak[0]:firstPeak[0]+(80/rec.dt)]
+                        afterhyperpolarization = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0) 
 
-                        ws1['B31'] = peakdetect(afterhyperpolarization_trace, "negative", None, lookahead = 300, delta=0)          
+                        ws1['B31'] = afterhyperpolarization     
                         # Determine Spike Height
                         ws1['B32'] = firstPeak[1] - afterhyperpolarization
                     ws1[coordinate] = len(peakdetect(injected_trace, "positive", None, lookahead = 300, delta=5))
