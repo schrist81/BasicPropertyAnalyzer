@@ -1,3 +1,19 @@
+import sys
+# IO package für Pfadnamen
+stflist = ['C:\\Program Files\\Stimfit 0.14\\wx-3.0-msw', 
+           'C:\\Program Files\\Stimfit 0.14\\wx-3.0-msw', 
+           'C:\\Program Files\\Stimfit 0.14', 
+           'C:\\Program Files\\Stimfit 0.14\\stf-site-packages', 
+           'C:\\WINDOWS\\SYSTEM32\\python27.zip', 
+           'C:\\Users\\c-sch_000\\Anaconda\\Lib', 
+           'C:\\Users\\c-sch_000\\Anaconda\\DLLs', 
+           'C:\\Python27\\Lib', 
+           'C:\\Python27\\DLLs', 
+           'C:\\Python27\\Lib\\lib-tk', 
+           'C:\\Program Files\\Stimfit 0.14', 
+           'C:\\Python27', 
+           'C:\\Python27\\lib\\site-packages']
+sys.path = list(set(sys.path + stflist))
 from Tkinter import *
 import tkMessageBox as box
 import tkFileDialog 
