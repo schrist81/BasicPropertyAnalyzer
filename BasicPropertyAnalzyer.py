@@ -310,19 +310,19 @@ class Example(Frame):
         menubar = Menu(self.parent)
         self.parent.config(menu=menubar)
         
-        fileMenu = Menu(menubar)
+        fileMenu = Menu(menubar, tearoff=0)
         fileMenu.add_command(label="Open file gap free recording...", command=self.onOpenGapFree)
         fileMenu.add_command(label="Open current step recording...", command=self.onOpenCurrentStep)
         fileMenu.add_command(label="Open voltage step recording...", command=self.onOpenVoltageStep)
         fileMenu.add_command(label="Exit", command=self.onExit)    
         menubar.add_cascade(label="File", menu=fileMenu)     
         
-        optionMenu = Menu(menubar)
+        optionMenu = Menu(menubar, tearoff=0)
         optionMenu.add_command(label="Set parent file directory for recordings", command=self.askdirectory)
         optionMenu.add_command(label="Set directory for generated excel files", command=self.askdirectorySave)
         menubar.add_cascade(label="Options", menu=optionMenu)           
         
-        helpMenu = Menu(menubar)
+        helpMenu = Menu(menubar, tearoff=0)
         helpMenu.add_command(label="Help", command=self.onHelp)
         helpMenu.add_command(label="About", command=self.onAbout)    
         menubar.add_cascade(label="?", menu=helpMenu)              
