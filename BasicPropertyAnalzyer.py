@@ -108,6 +108,8 @@ ws1['A320'] = "Na inactivation, normalized conductance G/Gmax"
 
 ws1['A359'] = "K currents (pA) last 50 ms averaged"
 
+ws1['B24'] = "=SUM(B19:B23)"
+
 
 def voltageStepInserter(first_column, last_column, voltage_begin, step):
     m = 0
@@ -600,7 +602,7 @@ class Example(Frame):
                     #RMP only determined in sAP code 1 files (other cases more complicated, maybe later)
                     ws1['B7'] = spontActivity().mean_first_10s(complete_dataset)   
 
-            ws1['B16'] = sAP
+            ws1['B16'] = "=SUM(B13:B15)"
             ws1['B6'] = rig
             ws1['B5'] = abffile[0] + "." + abffile[1]
             dest_filename = dest_directory + "\\"  + abffile[0] + ".xlsx"
