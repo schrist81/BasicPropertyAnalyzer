@@ -543,7 +543,8 @@ class Example(Frame):
 
                         ws1['B31'] = afterhyperpolarization     
                         # Determine Spike Height
-                        ws1['B32'] = firstPeak[1] - afterhyperpolarization
+                        ws1['B32'] = "=B30-B31"
+                        #ws1['B32'] = firstPeak[1] - afterhyperpolarization
                     ws1[coordinate] = len(peakdetect(injected_trace, "positive", None, lookahead = 300, delta=5))
                 else:
                     ws1[coordinate] = 0
