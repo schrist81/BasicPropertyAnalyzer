@@ -549,6 +549,7 @@ class Example(Frame):
                 else:
                     ws1[coordinate] = 0
         
+        ws1['B8'] = '' # leert input resistance, falls der Wert nicht korrekt berechnet werden kann, steht ansonsten noch der input resistance der letzten Zelle drin.
         ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
         ws1['B27'] = iAP_file
         wb.save(filename = dest_filename)
@@ -583,7 +584,7 @@ class Example(Frame):
             
             
             # noch nicht ganz sauber, muss in separate Klasse
-            ws1['B7'] = '' //Feld für RMP auf leer setzen, damit nicht der Wert der vorherigen Zelle eingetragen wird, falls Zelle sAP oder attempted sAP zeigt.
+            ws1['B7'] = '' #Feld für RMP auf leer setzen, damit nicht der Wert der vorherigen Zelle eingetragen wird, falls Zelle sAP oder attempted sAP zeigt.
             if spontActivity().action_potential_found():
                 sAP =  3
                 ws1['B15'] = sAP
