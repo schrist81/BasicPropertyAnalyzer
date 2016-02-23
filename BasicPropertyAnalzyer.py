@@ -334,9 +334,12 @@ class Example(Frame):
         #self.txt.pack(fill=BOTH, expand=1)
         
     def askdirectory(self):
-        global openDirectory
+        global openDirectory, saveDirectory, dest_filename, dest_directory
         """Returns a selected directoryname."""
         openDirectory = tkFileDialog.askdirectory()
+        saveDirectory = openDirectory
+        dest_directory = openDirectory
+        print dest_directory
         
     def askdirectorySave(self):
         global saveDirectory, dest_filename, dest_directory
@@ -512,20 +515,21 @@ class Example(Frame):
                 interval_begin = 500/rec.dt
                 interval_end = 1000/rec.dt
             
-                
+                #extracts the 1s current step part of each sweep
+                injected_trace = trace[1612:101612]    
+
                 if (i == 0):
-                    if (trace[trace.argmax()] < 0):
+                    if (injected_trace[trace.argmax()] < 0):
                         first_mean = trace[interval_begin:interval_end].mean()
                     else:
                         first_mean = "Error"
                 elif (i == 1): 
-                    if (trace[trace.argmax()] < 0):
+                    if (injected_trace[trace.argmax()] < 0):
                         second_mean = trace[interval_begin:interval_end].mean()
                     else:
                         second_mean = "Error"
                 i = i + 1
-                #extracts the 1s current step part of each sweep
-                injected_trace = trace[1612:101612]                 
+             
                 coordinate = "B" + str(36+i)
                 if (injected_trace[injected_trace.argmax()] > 0):
                     if sweep == -1:
