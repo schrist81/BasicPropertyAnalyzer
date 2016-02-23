@@ -583,6 +583,7 @@ class Example(Frame):
             
             
             # noch nicht ganz sauber, muss in separate Klasse
+            ws1['B7'] = '' //Feld für RMP auf leer setzen, damit nicht der Wert der vorherigen Zelle eingetragen wird, falls Zelle sAP oder attempted sAP zeigt.
             if spontActivity().action_potential_found():
                 sAP =  3
                 ws1['B15'] = sAP
