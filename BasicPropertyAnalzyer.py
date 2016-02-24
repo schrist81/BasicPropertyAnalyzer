@@ -479,6 +479,7 @@ class Example(Frame):
             # save maximum K+ current
             K_max_current_density = "="+str(K_max_current)+"/B9"
             ws1['B82'] = K_max_current_density
+            print "Inactivation protocol"
         wb.save(filename = dest_filename)
     
     def onOpenCurrentStep(self):
@@ -556,6 +557,7 @@ class Example(Frame):
         ws1['B8'] = '' # leert input resistance, falls der Wert nicht korrekt berechnet werden kann, steht ansonsten noch der input resistance der letzten Zelle drin.
         ws1['B8'] = inducedActivity().calculateInputResistance(first_mean, second_mean)  
         ws1['B27'] = iAP_file
+        print "Current step"
         wb.save(filename = dest_filename)
             
     
@@ -575,6 +577,7 @@ class Example(Frame):
             singles = path.split("/")
             abffile = singles[-1]
             abffile = abffile.split(".")
+            ws1['B3'] = singles[-3]+"/"+singles[-2]
             
 
             # Read sampling interval in ms -> 0.2 ms for testing file
@@ -614,6 +617,7 @@ class Example(Frame):
             ws1['B5'] = abffile[0] + "." + abffile[1]
             dest_filename = dest_directory + "\\"  + abffile[0] + ".xlsx"
             wb.save(filename = dest_filename)
+            print "Gap free"
     def readFile(self, filename):
         pass
         #f = open(filename, "r")
