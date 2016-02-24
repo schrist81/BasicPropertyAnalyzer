@@ -517,7 +517,7 @@ class Example(Frame):
                 interval_end = 1000/rec.dt
             
                 #extracts the 1s current step part of each sweep
-                injected_trace = trace[1612:101612]    
+                injected_trace = trace[1612:51612]    
 
                 if (i == 0):
                     if (injected_trace[injected_trace.argmax()] < 0):
