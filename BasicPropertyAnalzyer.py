@@ -520,12 +520,12 @@ class Example(Frame):
                 injected_trace = trace[1612:101612]    
 
                 if (i == 0):
-                    if (injected_trace[trace.argmax()] < 0):
+                    if (injected_trace[injected_trace.argmax()] < 0):
                         first_mean = trace[interval_begin:interval_end].mean()
                     else:
                         first_mean = "Error"
                 elif (i == 1): 
-                    if (injected_trace[trace.argmax()] < 0):
+                    if (injected_trace[injected_trace.argmax()] < 0):
                         second_mean = trace[interval_begin:interval_end].mean()
                     else:
                         second_mean = "Error"
