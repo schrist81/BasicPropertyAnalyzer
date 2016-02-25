@@ -21,6 +21,7 @@ import stfio
 import tkSimpleDialog 
 
 # Imports for Export to Excel
+import openpyxl
 from openpyxl import Workbook
 from openpyxl.compat import range
 from openpyxl.cell import get_column_letter
@@ -323,6 +324,11 @@ class Example(Frame):
         optionMenu.add_command(label="Set parent file directory for recordings", command=self.askdirectory)
         optionMenu.add_command(label="Set directory for generated excel files", command=self.askdirectorySave)
         menubar.add_cascade(label="Options", menu=optionMenu)           
+
+        optionMenu = Menu(menubar, tearoff=0)
+        optionMenu.add_command(label="Read Basic SOP file", command=self.onOpenBasicSOP)
+        optionMenu.add_command(label="Read synaptic SOP file", command=self.onOpenSynapticSOP)
+        menubar.add_cascade(label="Analysis", menu=optionMenu)               
         
         helpMenu = Menu(menubar, tearoff=0)
         helpMenu.add_command(label="Help", command=self.onHelp)
@@ -354,7 +360,7 @@ class Example(Frame):
         root.destroy()
         
     def onAbout(self):
-        box.showinfo("About Basic Properties Analyzer", "Version 1.1, July 2015\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)\n\n https://github.com/schrist81/BasicPropertyAnalyzer") 
+        box.showinfo("About Basic Properties Analyzer", "Version 1.2, February 2016\n\n Copyright: Christian Schnell (cschnell@schnell-thiessen.de)\n\n https://github.com/schrist81/BasicPropertyAnalyzer") 
     
     def onHelp(self):
         pass     
@@ -623,6 +629,18 @@ class Example(Frame):
         #f = open(filename, "r")
         #text = f.read()
         #return text
+
+    def onOpenBasicSOP(self):
+        ftypes = [('Excel files', '*.xlsx'), ('All files', '*')]
+        dlg = tkFileDialog.Open(self, filetypes = ftypes, initialdir = openDirectory)
+        fl = dlg.show()
+        BasicSOPworkbook = openpyxl.load_workbook(fl)
+        BasicSOPsheets = BasicSOPworkbook.get_sheet_names()
+        
+        pass
+
+    def onOpenSynapticSOP(self):
+        pass
         
   
 
