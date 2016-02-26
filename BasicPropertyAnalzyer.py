@@ -34,6 +34,9 @@ import pylab
 from scipy import fft, ifft
 from scipy.optimize import curve_fit
 
+# Imports for Matplotlib
+import matplotlib.pyplot as plt
+
 # Import for directory settings
 
 import os
@@ -637,8 +640,65 @@ class Example(Frame):
         BasicSOPworkbook = openpyxl.load_workbook(fl)
         BasicSOPsheets = BasicSOPworkbook.get_sheet_names()
         
-        pass
+        for i in range(0,len(BasicSOPsheets)):
+            sAP_silent = 0
+            numberOfCells = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B13':str(get_column_letter(sheet.get_highest_column()))+str(13)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 1:
+                        sAP_silent = sAP_silent + cellObj.value
+            #print ("sAP silent: " + str(sAP_silent))
+            numberOfCells = sAP_silent * 1.0
+            #print numberOfCells            
+            sAP_attempted = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B14':str(get_column_letter(sheet.get_highest_column()))+str(14)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 2:
+                        sAP_attempted = sAP_attempted + cellObj.value
+            sAP_attempted = sAP_attempted/2.0
+            numberOfCells = numberOfCells + sAP_attempted
+            #print ("sAP_attempted: " + str(sAP_attempted))
 
+            sAP_full = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B15':str(get_column_letter(sheet.get_highest_column()))+str(15)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 3.0:
+                        sAP_full = sAP_full + cellObj.value
+            sAP_full = sAP_full/3            
+            numberOfCells = numberOfCells + sAP_full
+            #print numberOfCells    
+            #print ("sAP full: " + str(sAP_full))
+            
+
+            #print numberOfCells
+            #print "=========="
+            
+            # Data to plot
+            #labels = 'Full', 'Attempted', 'Silent' 
+            #print sAP_silent/numberOfCells
+            
+            sizes = [(sAP_full/numberOfCells)*100*360, (sAP_attempted/numberOfCells)*100*360, (sAP_silent/numberOfCells)*100*360]
+            colors = ['green','yellow','red']
+            #explode = (0, 0, 0)  # explode 1st slice
+            # Plot
+            
+            plt.yticks
+            plt.suptitle(BasicSOPsheets[i], fontsize=20)
+            plt.pie(sizes, colors=colors,
+                    autopct='%1.1f%%', shadow=False, startangle=90)
+            plt.axis('equal')
+            plt.savefig('sAP'+str(i), dpi=None, facecolor='w', edgecolor='w',
+                    orientation='portrait', papertype=None, format=None,
+                    transparent=False, bbox_inches=None, pad_inches=0.1,
+                    frameon=None)
+            plt.clf()
+
+            
+
+            
     def onOpenSynapticSOP(self):
         pass
         
