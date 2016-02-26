@@ -641,6 +641,7 @@ class Example(Frame):
         BasicSOPsheets = BasicSOPworkbook.get_sheet_names()
         
         for i in range(0,len(BasicSOPsheets)):
+            #plot sAP
             sAP_silent = 0
             numberOfCells = 0
             sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
@@ -648,9 +649,9 @@ class Example(Frame):
                 for cellObj in rowOfCellObjects:
                     if cellObj.value == 1:
                         sAP_silent = sAP_silent + cellObj.value
-            #print ("sAP silent: " + str(sAP_silent))
+
             numberOfCells = sAP_silent * 1.0
-            #print numberOfCells            
+        
             sAP_attempted = 0
             sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
             for rowOfCellObjects in tuple(sheet['B14':str(get_column_letter(sheet.get_highest_column()))+str(14)]):
@@ -659,7 +660,6 @@ class Example(Frame):
                         sAP_attempted = sAP_attempted + cellObj.value
             sAP_attempted = sAP_attempted/2.0
             numberOfCells = numberOfCells + sAP_attempted
-            #print ("sAP_attempted: " + str(sAP_attempted))
 
             sAP_full = 0
             sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
@@ -669,16 +669,6 @@ class Example(Frame):
                         sAP_full = sAP_full + cellObj.value
             sAP_full = sAP_full/3            
             numberOfCells = numberOfCells + sAP_full
-            #print numberOfCells    
-            #print ("sAP full: " + str(sAP_full))
-            
-
-            #print numberOfCells
-            #print "=========="
-            
-            # Data to plot
-            #labels = 'Full', 'Attempted', 'Silent' 
-            #print sAP_silent/numberOfCells
             
             sizes = [(sAP_full/numberOfCells)*100*360, (sAP_attempted/numberOfCells)*100*360, (sAP_silent/numberOfCells)*100*360]
             colors = ['green','yellow','red']
@@ -695,6 +685,81 @@ class Example(Frame):
                     transparent=False, bbox_inches=None, pad_inches=0.1,
                     frameon=None)
             plt.clf()
+
+            sAP_silent = 0
+            numberOfCells = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B13':str(get_column_letter(sheet.get_highest_column()))+str(13)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 1:
+                        sAP_silent = sAP_silent + cellObj.value
+
+            numberOfCells = sAP_silent * 1.0
+            
+            # plot iAPs
+
+            iAP_none = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B19':str(get_column_letter(sheet.get_highest_column()))+str(19)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 1:
+                        iAP_none = iAP_none + cellObj.value
+            iAP_none = iAP_none/1.0
+            numberOfCells = numberOfCells + iAP_none
+
+            iAP_single_attempted = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B20':str(get_column_letter(sheet.get_highest_column()))+str(20)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 2:
+                        iAP_single_attempted = iAP_single_attempted + cellObj.value
+            iAP_single_attempted = iAP_single_attempted/2.0
+            numberOfCells = numberOfCells + iAP_single_attempted
+
+
+            iAP_single = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B21':str(get_column_letter(sheet.get_highest_column()))+str(21)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 3:
+                        iAP_single = iAP_single + cellObj.value
+            iAP_single = iAP_single/3.0
+            numberOfCells = numberOfCells + iAP_single
+
+            iAP_train_attempted = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B22':str(get_column_letter(sheet.get_highest_column()))+str(22)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 4:
+                        iAP_train_attempted = iAP_train_attempted + cellObj.value
+            iAP_train_attempted = iAP_train_attempted/4.0
+            numberOfCells = numberOfCells + iAP_train_attempted
+
+            iAP_train = 0
+            sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
+            for rowOfCellObjects in tuple(sheet['B23':str(get_column_letter(sheet.get_highest_column()))+str(23)]):
+                for cellObj in rowOfCellObjects:
+                    if cellObj.value == 5:
+                        iAP_train = iAP_train + cellObj.value
+            iAP_train = iAP_train/5.0
+            numberOfCells = numberOfCells + iAP_train               
+            
+            sizes = [(iAP_train/numberOfCells)*100*360, (iAP_train_attempted/numberOfCells)*100*360, (iAP_single/numberOfCells)*100*360, (iAP_single_attempted/numberOfCells)*100*360, (iAP_none/numberOfCells)*100*360]
+            colors = ['green','lightgreen','yellow','orange','red']
+            #explode = (0, 0, 0)  # explode 1st slice
+            # Plot
+            
+            plt.yticks
+            plt.suptitle(BasicSOPsheets[i], fontsize=20)
+            plt.pie(sizes, colors=colors,
+                    autopct='%1.1f%%', shadow=False, startangle=90)
+            plt.axis('equal')
+            plt.savefig('iAP'+str(i), dpi=None, facecolor='w', edgecolor='w',
+                    orientation='portrait', papertype=None, format=None,
+                    transparent=False, bbox_inches=None, pad_inches=0.1,
+                    frameon=None)
+            plt.clf()
+
 
             
 
