@@ -789,7 +789,7 @@ class Example(Frame):
         for n in range(len(RMPnparray)):
             listForPlotting.append(RMPnparray[n].mean())
             listForError.append(stats.sem(RMPnparray[n]))
-        x = np.arange(9)
+        x = np.arange(len(RMPnparray))
         plt.suptitle("Resting membrane potential", fontsize=14)
         plt.xticks(rotation=50, horizontalalignment='right')
         plt.bar(x, listForPlotting, yerr=listForError, align='center')
@@ -809,7 +809,7 @@ class Example(Frame):
         for n in range(len(IPRnparray)):
             listForPlotting.append(IPRnparray[n].mean())
             listForError.append(stats.sem(IPRnparray[n]))
-        x = np.arange(9)
+        x = np.arange(len(IPRnparray))
         plt.suptitle("Input resistance", fontsize=14)
         plt.xticks(rotation=50, horizontalalignment='right')
         plt.bar(x, listForPlotting, yerr=listForError, align='center')
