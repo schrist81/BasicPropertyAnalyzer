@@ -31,7 +31,7 @@ from openpyxl.styles import Font, Fill
 import numpy as np
 from math import pi, log
 import pylab
-from scipy import fft, ifft
+from scipy import fft, ifft, stats
 from scipy.optimize import curve_fit
 
 # Imports for Matplotlib
@@ -359,7 +359,6 @@ class Example(Frame):
         print dest_directory
 
     def onExit(self):
-        #wb.save(filename = dest_filename)
         root.destroy()
         
     def onAbout(self):
@@ -639,9 +638,13 @@ class Example(Frame):
         fl = dlg.show()
         BasicSOPworkbook = openpyxl.load_workbook(fl)
         BasicSOPsheets = BasicSOPworkbook.get_sheet_names()
-        
+        RMPlistoflists = []
+        inputResistanceListofLists = []
         for i in range(0,len(BasicSOPsheets)):
-            #plot sAP
+
+            # #############################################
+            # plot figures of spontaneous action potentials
+            # #############################################
             sAP_silent = 0
             numberOfCells = 0
             sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
@@ -673,8 +676,7 @@ class Example(Frame):
             sizes = [(sAP_full/numberOfCells)*100*360, (sAP_attempted/numberOfCells)*100*360, (sAP_silent/numberOfCells)*100*360]
             colors = ['green','yellow','red']
             #explode = (0, 0, 0)  # explode 1st slice
-            # Plot
-            
+                        
             plt.yticks
             plt.suptitle(BasicSOPsheets[i], fontsize=20)
             plt.pie(sizes, colors=colors,
@@ -696,8 +698,9 @@ class Example(Frame):
 
             numberOfCells = sAP_silent * 1.0
             
-            # plot iAPs
-
+            # #########################################
+            # plot figures of induced action potentials
+            # #########################################
             iAP_none = 0
             sheet = BasicSOPworkbook.get_sheet_by_name(BasicSOPsheets[i])
             for rowOfCellObjects in tuple(sheet['B19':str(get_column_letter(sheet.get_highest_column()))+str(19)]):
@@ -761,9 +764,63 @@ class Example(Frame):
             plt.clf()
 
 
-            
+            # #########################################
+            # plot of basic properties
+            # #########################################
+            RMPlist = []
+            for rowOfCellObjects in tuple(sheet['B7':str(get_column_letter(sheet.get_highest_column()))+str(7)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        RMPlist.append(cellObj.value)
+                RMPlistoflists.append(RMPlist)
 
-            
+            inputResistanceList = []
+            for rowOfCellObjects in tuple(sheet['B8':str(get_column_letter(sheet.get_highest_column()))+str(8)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        inputResistanceList.append(cellObj.value)
+                inputResistanceListofLists.append(inputResistanceList)
+
+
+        #hier müssen jetzt die nparrays der einzelnen Datenblätter in ein nparray pro Parameter gespeichert werden, um sie plotten und analysieren zu können
+        RMPnparray=np.array([np.array(xi) for xi in RMPlistoflists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(RMPnparray)):
+            listForPlotting.append(RMPnparray[n].mean())
+            listForError.append(stats.sem(RMPnparray[n]))
+        x = np.arange(9)
+        plt.suptitle("Resting membrane potential", fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, align='center')
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Resting membrane potential [mV]', fontsize=14, style='italic', verticalalignment='top')
+        plt.tight_layout()
+
+        plt.savefig('RMP', dpi=None, facecolor='w', edgecolor='w',
+                orientation='portrait', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()      
+
+        IPRnparray=np.array([np.array(xi) for xi in inputResistanceListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(IPRnparray)):
+            listForPlotting.append(IPRnparray[n].mean())
+            listForError.append(stats.sem(IPRnparray[n]))
+        x = np.arange(9)
+        plt.suptitle("Input resistance", fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, align='center')
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Input resistance [MOhm]', fontsize=14, style='italic', verticalalignment='top')
+        plt.tight_layout()
+        plt.savefig('InputResistance', dpi=None, facecolor='w', edgecolor='w',
+                orientation='portrait', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()             
     def onOpenSynapticSOP(self):
         pass
         
