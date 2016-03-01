@@ -758,7 +758,7 @@ class Example(Frame):
                     autopct='%1.1f%%', shadow=False, startangle=90)
             plt.axis('equal')
             plt.savefig('iAP'+str(i), dpi=None, facecolor='w', edgecolor='w',
-                    orientation='portrait', papertype=None, format=None,
+                    orientation='landscape', papertype=None, format=None,
                     transparent=False, bbox_inches=None, pad_inches=0.1,
                     frameon=None)
             plt.clf()
@@ -790,15 +790,17 @@ class Example(Frame):
             listForPlotting.append(RMPnparray[n].mean())
             listForError.append(stats.sem(RMPnparray[n]))
         x = np.arange(len(RMPnparray))
-        plt.suptitle("Resting membrane potential", fontsize=14)
+        #plt.suptitle("Resting membrane potential", fontsize=14)
         plt.xticks(rotation=50, horizontalalignment='right')
         plt.bar(x, listForPlotting, yerr=listForError, align='center')
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Resting membrane potential [mV]', fontsize=14, style='italic', verticalalignment='top')
+        plt.ylabel('Resting membrane potential [mV]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
         plt.tight_layout()
 
         plt.savefig('RMP', dpi=None, facecolor='w', edgecolor='w',
-                orientation='portrait', papertype=None, format=None,
+                orientation='landscape', papertype=None, format=None,
                 transparent=False, bbox_inches=None, pad_inches=0.1,
                 frameon=None)
         plt.clf()      
@@ -810,14 +812,19 @@ class Example(Frame):
             listForPlotting.append(IPRnparray[n].mean())
             listForError.append(stats.sem(IPRnparray[n]))
         x = np.arange(len(IPRnparray))
-        plt.suptitle("Input resistance", fontsize=14)
+        print len(IPRnparray)
+        #x = np.arange(len(IPRnparray))
+        plt.suptitle("Input resistance", y=1.05, fontsize=14)
         plt.xticks(rotation=50, horizontalalignment='right')
         plt.bar(x, listForPlotting, yerr=listForError, align='center')
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Input resistance [MOhm]', fontsize=14, style='italic', verticalalignment='top')
+        plt.ylabel('Input resistance [MOhm]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
         plt.tight_layout()
+        
         plt.savefig('InputResistance', dpi=None, facecolor='w', edgecolor='w',
-                orientation='portrait', papertype=None, format=None,
+                orientation='landscape', papertype=None, format=None,
                 transparent=False, bbox_inches=None, pad_inches=0.1,
                 frameon=None)
         plt.clf()             
