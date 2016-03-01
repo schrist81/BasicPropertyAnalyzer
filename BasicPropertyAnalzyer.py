@@ -758,7 +758,7 @@ class Example(Frame):
                     autopct='%1.1f%%', shadow=False, startangle=90)
             plt.axis('equal')
             plt.savefig('iAP'+str(i), dpi=None, facecolor='w', edgecolor='w',
-                    orientation='landscape', papertype=None, format=None,
+                    orientation='portrait', papertype=None, format=None,
                     transparent=False, bbox_inches=None, pad_inches=0.1,
                     frameon=None)
             plt.clf()
@@ -783,6 +783,7 @@ class Example(Frame):
 
 
         #hier müssen jetzt die nparrays der einzelnen Datenblätter in ein nparray pro Parameter gespeichert werden, um sie plotten und analysieren zu können
+        colors = ['#000000', '#666666', '#999999', '#e6e6e6', '#339933', '#66ff66', '#0033cc', '#3399ff', '#991f00', '#ff3300', '#ff9980', '#000000', '#666666', '#999999', '#e6e6e6', '#339933', '#0033cc', '#66ff66', '#3399ff', '#991f00', '#ff3300', '#ff9980']
         RMPnparray=np.array([np.array(xi) for xi in RMPlistoflists])
         listForPlotting = []
         listForError = []
@@ -792,7 +793,18 @@ class Example(Frame):
         x = np.arange(len(RMPnparray))
         #plt.suptitle("Resting membrane potential", fontsize=14)
         plt.xticks(rotation=50, horizontalalignment='right')
-        plt.bar(x, listForPlotting, yerr=listForError, align='center')
+        
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
         plt.xticks(x, BasicSOPsheets)
         plt.ylabel('Resting membrane potential [mV]', fontsize=14, x=0.05, style='italic')
         plt.autoscale()
@@ -800,7 +812,7 @@ class Example(Frame):
         plt.tight_layout()
 
         plt.savefig('RMP', dpi=None, facecolor='w', edgecolor='w',
-                orientation='landscape', papertype=None, format=None,
+                orientation='portrait', papertype=None, format=None,
                 transparent=False, bbox_inches=None, pad_inches=0.1,
                 frameon=None)
         plt.clf()      
@@ -814,9 +826,20 @@ class Example(Frame):
         x = np.arange(len(IPRnparray))
         print len(IPRnparray)
         #x = np.arange(len(IPRnparray))
+
         plt.suptitle("Input resistance", y=1.05, fontsize=14)
         plt.xticks(rotation=50, horizontalalignment='right')
-        plt.bar(x, listForPlotting, yerr=listForError, align='center')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
         plt.xticks(x, BasicSOPsheets)
         plt.ylabel('Input resistance [MOhm]', fontsize=14, x=0.05, style='italic')
         plt.autoscale()
