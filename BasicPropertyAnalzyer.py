@@ -640,6 +640,16 @@ class Example(Frame):
         BasicSOPsheets = BasicSOPworkbook.get_sheet_names()
         RMPlistoflists = []
         inputResistanceListofLists = []
+        capacitanceListofLists = []
+        thresholdListofLists = []
+        overshootListofLists = []
+        afterhyperpolarizationListofLists = []
+        spikeHeightListofLists = []
+        depolRateListofLists = []
+        repolRateListofLists = []
+        halfWidthListofLists = []    
+        maxNaListofLists = []
+        maxKListofLists = []      
         for i in range(0,len(BasicSOPsheets)):
 
             # #############################################
@@ -781,6 +791,80 @@ class Example(Frame):
                         inputResistanceList.append(cellObj.value)
                 inputResistanceListofLists.append(inputResistanceList)
 
+            capacitanceList = []
+            for rowOfCellObjects in tuple(sheet['B9':str(get_column_letter(sheet.get_highest_column()))+str(9)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        capacitanceList.append(cellObj.value)
+                capacitanceListofLists.append(capacitanceList)              
+
+            thresholdList = []
+            for rowOfCellObjects in tuple(sheet['B29':str(get_column_letter(sheet.get_highest_column()))+str(29)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        thresholdList.append(cellObj.value)
+                thresholdListofLists.append(thresholdList)    
+
+            overshootList = []
+            for rowOfCellObjects in tuple(sheet['B30':str(get_column_letter(sheet.get_highest_column()))+str(30)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        overshootList.append(cellObj.value)
+                overshootListofLists.append(overshootList)  
+
+            afterhypolarizationList = []
+            for rowOfCellObjects in tuple(sheet['B31':str(get_column_letter(sheet.get_highest_column()))+str(31)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        afterhypolarizationList.append(cellObj.value)
+                afterhyperpolarizationListofLists.append(afterhypolarizationList)  
+
+            spikeHeightList = []
+            for rowOfCellObjects in tuple(sheet['B32':str(get_column_letter(sheet.get_highest_column()))+str(32)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        spikeHeightList.append(cellObj.value)
+                spikeHeightListofLists.append(spikeHeightList)   
+
+            depolRateList = []
+            for rowOfCellObjects in tuple(sheet['B33':str(get_column_letter(sheet.get_highest_column()))+str(33)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        depolRateList.append(cellObj.value)
+                depolRateListofLists.append(depolRateList)            
+
+
+            repolRateList = []
+            for rowOfCellObjects in tuple(sheet['B34':str(get_column_letter(sheet.get_highest_column()))+str(34)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        repolRateList.append(cellObj.value)
+                repolRateListofLists.append(repolRateList)      
+
+            halfWidthList = []
+            for rowOfCellObjects in tuple(sheet['B35':str(get_column_letter(sheet.get_highest_column()))+str(35)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        halfWidthList.append(cellObj.value)
+                halfWidthListofLists.append(halfWidthList)            
+
+            maxNaList = []
+            for rowOfCellObjects in tuple(sheet['B81':str(get_column_letter(sheet.get_highest_column()))+str(81)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        maxNaList.append(cellObj.value)
+                maxNaListofLists.append(maxNaList)
+            print maxNaListofLists
+
+            maxKList = []
+            for rowOfCellObjects in tuple(sheet['B82':str(get_column_letter(sheet.get_highest_column()))+str(82)]):
+                for cellObj in rowOfCellObjects:
+                    if type(cellObj.value) == float:
+                        maxKList.append(cellObj.value)
+                maxKListofLists.append(maxKList)
+            print maxKListofLists
+
+
 
         #hier müssen jetzt die nparrays der einzelnen Datenblätter in ein nparray pro Parameter gespeichert werden, um sie plotten und analysieren zu können
         colors = ['#000000', '#666666', '#999999', '#e6e6e6', '#339933', '#66ff66', '#0033cc', '#3399ff', '#991f00', '#ff3300', '#ff9980', '#000000', '#666666', '#999999', '#e6e6e6', '#339933', '#0033cc', '#66ff66', '#3399ff', '#991f00', '#ff3300', '#ff9980']
@@ -850,7 +934,332 @@ class Example(Frame):
                 orientation='landscape', papertype=None, format=None,
                 transparent=False, bbox_inches=None, pad_inches=0.1,
                 frameon=None)
-        plt.clf()             
+        plt.clf()     
+
+
+        capacitancenparray=np.array([np.array(xi) for xi in capacitanceListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(capacitancenparray)):
+            listForPlotting.append(capacitancenparray[n].mean())
+            listForError.append(stats.sem(capacitancenparray[n]))
+        x = np.arange(len(capacitancenparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Capacitance [pF]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Capacitance', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf() 
+
+
+
+        thresholdnparray=np.array([np.array(xi) for xi in thresholdListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(thresholdnparray)):
+            listForPlotting.append(thresholdnparray[n].mean())
+            listForError.append(stats.sem(thresholdnparray[n]))
+        x = np.arange(len(thresholdnparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Threshold [mV]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Threshold', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf() 
+
+
+        overshootnparray=np.array([np.array(xi) for xi in overshootListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(overshootnparray)):
+            listForPlotting.append(overshootnparray[n].mean())
+            listForError.append(stats.sem(overshootnparray[n]))
+        x = np.arange(len(overshootnparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Overshoot [mV]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Overshoot', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()
+
+
+       
+
+        afterhypolarizationnparray=np.array([np.array(xi) for xi in afterhyperpolarizationListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(afterhypolarizationnparray)):
+            listForPlotting.append(afterhypolarizationnparray[n].mean())
+            listForError.append(stats.sem(afterhypolarizationnparray[n]))
+        x = np.arange(len(afterhypolarizationnparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Spike Height", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Afterhypolarization [mV]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Afterhypolarization', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()         
+
+
+        depolRatenparray=np.array([np.array(xi) for xi in depolRateListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(depolRatenparray)):
+            listForPlotting.append(depolRatenparray[n].mean())
+            listForError.append(stats.sem(depolRatenparray[n]))
+        x = np.arange(len(depolRatenparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Maximal depolarization rate [mV/ms]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Depolarization', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()
+
+        repolratenparray=np.array([np.array(xi) for xi in repolRateListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(repolratenparray)):
+            listForPlotting.append(repolratenparray[n].mean())
+            listForError.append(stats.sem(repolratenparray[n]))
+        x = np.arange(len(thresholdnparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Maximal repolarization rate [mV/ms]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Repolarization', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf() 
+
+        halfWidthRatenparray=np.array([np.array(xi) for xi in halfWidthListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(halfWidthRatenparray)):
+            listForPlotting.append(halfWidthRatenparray[n].mean())
+            listForError.append(stats.sem(halfWidthRatenparray[n]))
+        x = np.arange(len(halfWidthRatenparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Half width duration [ms]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('Halfwidth', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()
+
+        maxKnparray=np.array([np.array(xi) for xi in maxKListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(maxKnparray)):
+            listForPlotting.append(maxKnparray[n].mean())
+            listForError.append(stats.sem(maxKnparray[n]))
+        x = np.arange(len(maxKnparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Maximal K+ current density [pA/pF]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('maxK', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()        
+
+        maxNanparray=np.array([np.array(xi) for xi in maxNaListofLists])
+        listForPlotting = []
+        listForError = []
+        for n in range(len(maxNanparray)):
+            listForPlotting.append(maxNanparray[n].mean())
+            listForError.append(stats.sem(maxNanparray[n]))
+        x = np.arange(len(maxNanparray))
+
+        #x = np.arange(len(IPRnparray))
+
+        #plt.suptitle("Capacitance", y=1.05, fontsize=14)
+        plt.xticks(rotation=50, horizontalalignment='right')
+        plt.bar(x, listForPlotting, yerr=listForError, ecolor='#000000', align='center', color=colors)
+
+        #Following 5 lines of code are necessary to remove the right and top spine of the bar graph
+        ax = plt.subplot(111)
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        
+        plt.xticks(x, BasicSOPsheets)
+        plt.ylabel('Maximal Na+ current density [pA/pF]', fontsize=14, x=0.05, style='italic')
+        plt.autoscale()
+        plt.margins(0.05, 0)
+        plt.tight_layout()
+        
+        plt.savefig('maxNa', dpi=None, facecolor='w', edgecolor='w',
+                orientation='landscape', papertype=None, format=None,
+                transparent=False, bbox_inches=None, pad_inches=0.1,
+                frameon=None)
+        plt.clf()  
+ 
+
     def onOpenSynapticSOP(self):
         pass
         
