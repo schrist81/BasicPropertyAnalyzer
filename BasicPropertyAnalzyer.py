@@ -854,7 +854,6 @@ class Example(Frame):
                     if type(cellObj.value) == float:
                         maxNaList.append(cellObj.value)
                 maxNaListofLists.append(maxNaList)
-            print maxNaListofLists
 
             maxKList = []
             for rowOfCellObjects in tuple(sheet['B82':str(get_column_letter(sheet.get_highest_column()))+str(82)]):
@@ -862,7 +861,6 @@ class Example(Frame):
                     if type(cellObj.value) == float:
                         maxKList.append(cellObj.value)
                 maxKListofLists.append(maxKList)
-            print maxKListofLists
 
 
 
@@ -887,7 +885,7 @@ class Example(Frame):
         ax.spines['bottom'].set_visible(False)
         # Only show ticks on the left and bottom spines
         ax.yaxis.set_ticks_position('left')
-        ax.xaxis.set_ticks_position('bottom')
+        ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
         plt.ylabel('Resting membrane potential [mV]', fontsize=14, x=0.05, style='italic')
@@ -1066,10 +1064,10 @@ class Example(Frame):
         ax = plt.subplot(111)
         # Hide the right and top spines
         ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
         # Only show ticks on the left and bottom spines
         ax.yaxis.set_ticks_position('left')
-        ax.xaxis.set_ticks_position('bottom')
+        ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
         plt.ylabel('Afterhypolarization [mV]', fontsize=14, x=0.05, style='italic')
@@ -1242,10 +1240,10 @@ class Example(Frame):
         ax = plt.subplot(111)
         # Hide the right and top spines
         ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
         # Only show ticks on the left and bottom spines
         ax.yaxis.set_ticks_position('left')
-        ax.xaxis.set_ticks_position('bottom')
+        ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
         plt.ylabel('Maximal Na+ current density [pA/pF]', fontsize=14, x=0.05, style='italic')
