@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
 import sys
 # IO package für Pfadnamen
 stflist = ['C:\\Program Files\\Stimfit 0.14\\wx-3.0-msw', 
@@ -888,7 +890,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Resting membrane potential [mV]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Resting membrane potential [mV]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -923,7 +925,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Input resistance [MOhm]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Input resistance [MOhm]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -959,7 +961,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Capacitance [pF]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Capacitance [pF]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -996,7 +998,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Threshold [mV]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Threshold [mV]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1032,7 +1034,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Overshoot [mV]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Overshoot [mV]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1070,7 +1072,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Afterhypolarization [mV]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Afterhyperpolarization [mV]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1106,7 +1108,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Maximal depolarization rate [mV/ms]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Maximal depolarization rate [mV/ms]', fontsize=17.5, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1138,10 +1140,10 @@ class Example(Frame):
         ax.spines['bottom'].set_visible(False)
         # Only show ticks on the left and bottom spines
         ax.yaxis.set_ticks_position('left')
-        ax.xaxis.set_ticks_position('bottom')
+        ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Maximal repolarization rate [mV/ms]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Maximal repolarization rate [mV/ms]', fontsize=18, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1176,7 +1178,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Half width duration [ms]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Half width duration [ms]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1211,7 +1213,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('bottom')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Maximal K+ current density [pA/pF]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Maximal K+ current density [pA/pF]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
@@ -1246,7 +1248,7 @@ class Example(Frame):
         ax.xaxis.set_ticks_position('top')
         
         plt.xticks(x, BasicSOPsheets)
-        plt.ylabel('Maximal Na+ current density [pA/pF]', fontsize=14, x=0.05, style='italic')
+        plt.ylabel('Maximal Na+ current density [pA/pF]', fontsize=20, x=0.05, style='italic')
         plt.autoscale()
         plt.margins(0.05, 0)
         plt.tight_layout()
